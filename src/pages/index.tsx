@@ -92,16 +92,20 @@ const Home = () => {
                   key={`${x}-${y}`}
                   onClick={() => {
                     console.log(y, x);
-                    setBomb(x, y);
+                    setBomb(y, x);
+                    checkAround(y, x);
                     if (bombMap[y][x] !== 1) {
-                      checkAround(x, y);
+                      <div
+                        className={styles.number}
+                        style={{ backgroundPositionX: `${-30 * (board[y][x] - 1)}px` }}
+                      />;
                     }
                   }}
                 >
-                  {bombMap[y][x] === 1 ? null : (
+                  {bombMap[y][x] !== 1 && (
                     <div
                       className={styles.number}
-                      style={{ backgroundPositionX: `${-30 * board[y][x]}px` }}
+                      style={{ backgroundPositionX: `${-30 * (board[y][x] - 1)}px` }}
                     />
                   )}
                 </div>
