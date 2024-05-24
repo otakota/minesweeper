@@ -67,5 +67,7 @@
 .number {
   width: 30px;
   height: 30px;
-  background: url('C:\Users\iniad\minesweeper\src\asets\images\icons.png') no-repeat;
+
+  /* background: url('C:\Users\iniad\minesweeper\src\asets\images\icons.png') no-repeat; */
+  background-color: #bdbdbd;
 }

@@ -26,21 +26,27 @@ const Home = () => {
   ];
   const [inputBoard, setInputBoard] = useState(zeroBoard);
   const [bombMap, setBombMap] = useState(zeroBoard);
+
   const newBombMap = structuredClone(bombMap);
   const newInputBoard = structuredClone(inputBoard);
 
   const setBomb = (x: number, y: number) => {
+    // 初回かどうか
     if (!bombMap.flat().includes(1)) {
       newBombMap[y][x] = 1;
-      for (let i = 0; i < 11; i++) {
-        const nx = Math.floor(Math.random()) * 10;
-        const ny = Math.floor(Math.random()) * 10;
-        newBombMap[ny][nx] = 1;
+      // 最初に置いとく
+      const setUpBombMap = () => {
+        newBombMap[y][x] = 1;
+        while (newBombMap.flat().filter((cell) => cell === 1).length < 10 + 1) {
+          const nx = Math.floor(Math.random() * 9);
+          const ny = Math.floor(Math.random() * 9);
+          newBombMap[ny][nx] = 1;
+        }
         newBombMap[y][x] = 0;
-        setBombMap(newBombMap);
-      }
+      };
+      setUpBombMap();
+      setBombMap(newBombMap);
     }
-
     const userInput = inputBoard[y][x];
     if (userInput === 0) {
       newInputBoard[y][x] = 1;
@@ -48,32 +54,31 @@ const Home = () => {
     }
   };
 
-  const directions = [
-    [-1, -1],
-    [-1, 0],
-    [-1, 1],
-    [0, 1],
-    [1, 1],
-    [1, 0],
-    [1, -1],
-    [0, -1],
-  ];
-  const check = (x: number, y: number) => {
-    const count = 0;
-    for (const direction of directions) {
-      if (
-        bombMap[y + direction[0]][x + direction[1]] === 1 &&
-        bombMap[y + direction[0]] !== undefined
-      ) {
-        count + 1;
-      }
+  const checkAround = (x: number, y: number) => {
+    board[y][x] = [1, 0, 1]
+      .map((dx) =>
+        [-1, 0, 1].map((dy) => bombMap[y + dy] !== undefined && bombMap[y + dy][x + dx] === 1),
+      )
+      .flat()
+      .filter(Boolean).length;
+    if (board[y][x] === 0) {
+      [-1, 0, 1].forEach((dx) =>
+        [-1, 0, 1].forEach((dy) => {
+          if (board[y + dy]?.[x + dx] === -1) {
+            checkAround(x + dx, y + dy);
+          }
+        }),
+      );
     }
-    board[y][x] = count;
   };
 
-  const clickHandler = (x: number, y: number) => {
-    console.log(x, y);
-  };
+  inputBoard.forEach((row, j) =>
+    row.forEach((inputBoard, i) => {
+      if (inputBoard === 1) {
+        checkAround(i, j);
+      }
+    }),
+  );
 
   return (
     <div className={styles.container}>
@@ -82,13 +87,23 @@ const Home = () => {
           <div className={styles.board}>
             {board.map((row, y) =>
               row.map((color, x) => (
-                <div className={styles.cells} key={`${x}-${y}`} onClick={() => clickHandler(x, y)}>
-                  {
+                <div
+                  className={styles.cells}
+                  key={`${x}-${y}`}
+                  onClick={() => {
+                    console.log(y, x);
+                    setBomb(x, y);
+                    if (bombMap[y][x] !== 1) {
+                      checkAround(x, y);
+                    }
+                  }}
+                >
+                  {bombMap[y][x] === 1 ? null : (
                     <div
                       className={styles.number}
-                      // style={{ backgroundPositionX: `${-30 * }` }}
+                      style={{ backgroundPositionX: `${-30 * board[y][x]}px` }}
                     />
-                  }
+                  )}
                 </div>
               )),
             )}
@@ -98,5 +113,5 @@ const Home = () => {
     </div>
   );
 };
+
 export default Home;
-//onchange
