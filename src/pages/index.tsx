@@ -55,7 +55,29 @@ const Home = () => {
   };
 
   const checkAround = (x: number, y: number) => {
-    board[y][x] = [1, 0, 1]
+    //一旦directionで書き直してみよ
+    // const directions = [
+    //   [-1, -1],
+    //   [-1, 0],
+    //   [-1, 1],
+    //   [0, 1],
+    //   [1, 1],
+    //   [1, 0],
+    //   [1, -1],
+    //   [0, -1],
+    // ];
+    // let bombCount = 0;
+    // for (const direction of directions){
+    //   if (bombMap[y + direction[0]] !== undefined && bombMap[y + direction[0]][x +direction[1]] === 1){
+    //     bombCount++
+    //   }
+    //   if(bombCount == 0){
+    //     checkAround(y+direction[0],x+direction[1])
+    //   }
+    //   continue
+    // }
+
+    board[y][x] = [-1, 0, 1]
       .map((dx) =>
         [-1, 0, 1].map((dy) => bombMap[y + dy] !== undefined && bombMap[y + dy][x + dx] === 1),
       )
@@ -80,6 +102,12 @@ const Home = () => {
     }),
   );
 
+  const handleLeftClick = (x: number, y: number) => {
+    console.log(y, x);
+    setBomb(y, x);
+    checkAround(y, x);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.base}>
@@ -90,23 +118,22 @@ const Home = () => {
                 <div
                   className={styles.cells}
                   key={`${x}-${y}`}
-                  onClick={() => {
-                    console.log(y, x);
-                    setBomb(y, x);
-                    checkAround(y, x);
-                    if (bombMap[y][x] !== 1) {
+                  onClick={() => handleLeftClick(x, y)}
+                >
+                  {board[y][x] === 10 || board[y][x] === -1 || board[y][x] === 9 ? (
+                    <div className={styles.stone}>
                       <div
                         className={styles.number}
-                        style={{ backgroundPositionX: `${-30 * (board[y][x] - 1)}px` }}
-                      />;
-                    }
-                  }}
-                >
-                  {bombMap[y][x] !== 1 && (
-                    <div
-                      className={styles.number}
-                      style={{ backgroundPositionX: `${-30 * (board[y][x] - 1)}px` }}
-                    />
+                        style={{ backgroundPositionX: `${(100 / 13) * (board[y][x] - 1)}%` }}
+                      />
+                    </div>
+                  ) : (
+                    bombMap[y][x] !== 1 && (
+                      <div
+                        className={styles.number}
+                        style={{ backgroundPositionX: `${(100 / 13) * (board[y][x] - 1)}%` }}
+                      />
+                    )
                   )}
                 </div>
               )),
