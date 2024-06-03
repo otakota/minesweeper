@@ -54,29 +54,15 @@ const Home = () => {
     }
   };
 
-  const checkAround = (x: number, y: number) => {
-    //一旦directionで書き直してみよ
-    // const directions = [
-    //   [-1, -1],
-    //   [-1, 0],
-    //   [-1, 1],
-    //   [0, 1],
-    //   [1, 1],
-    //   [1, 0],
-    //   [1, -1],
-    //   [0, -1],
-    // ];
-    // let bombCount = 0;
-    // for (const direction of directions){
-    //   if (bombMap[y + direction[0]] !== undefined && bombMap[y + direction[0]][x +direction[1]] === 1){
-    //     bombCount++
-    //   }
-    //   if(bombCount == 0){
-    //     checkAround(y+direction[0],x+direction[1])
-    //   }
-    //   continue
-    // }
+  const isEnd = inputBoard
+    .flatMap((row, y) => row.map((cell, x) => cell === 1 && bombMap[y][x] === 1))
+    .some(Boolean);
+  console.log(isEnd);
 
+  if (isEnd) {
+  }
+
+  const checkAround = (x: number, y: number) => {
     board[y][x] = [-1, 0, 1]
       .map((dx) =>
         [-1, 0, 1].map((dy) => bombMap[y + dy] !== undefined && bombMap[y + dy][x + dx] === 1),
@@ -103,9 +89,9 @@ const Home = () => {
   );
 
   const handleLeftClick = (x: number, y: number) => {
-    console.log(y, x);
-    setBomb(y, x);
-    checkAround(y, x);
+    console.log(x, y);
+    setBomb(x, y);
+    checkAround(x, y);
   };
 
   return (
@@ -128,12 +114,15 @@ const Home = () => {
                       />
                     </div>
                   ) : (
-                    bombMap[y][x] !== 1 && (
-                      <div
-                        className={styles.number}
-                        style={{ backgroundPositionX: `${(100 / 13) * (board[y][x] - 1)}%` }}
-                      />
-                    )
+                    <div
+                      className={styles.number}
+                      style={{
+                        backgroundPositionX:
+                          bombMap[y][x] === 1
+                            ? `${(100 / 13) * 10}%`
+                            : `${(100 / 13) * (board[y][x] - 1)}%`,
+                      }}
+                    />
                   )}
                 </div>
               )),
