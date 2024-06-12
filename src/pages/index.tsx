@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import styles from './index.module.css';
 
 const Home = () => {
@@ -57,11 +57,17 @@ const Home = () => {
   const isEnd = inputBoard
     .flatMap((row, y) => row.map((cell, x) => cell === 1 && bombMap[y][x] === 1))
     .some(Boolean);
-  console.log(isEnd);
 
+  // foreachのほうがよくね
   if (isEnd) {
+    bombMap.map((row, y) => {
+      row.map((cell, x) => {
+        if (bombMap[y][x] === 1) {
+          board[y][x] = 11;
+        }
+      });
+    });
   }
-
   const checkAround = (x: number, y: number) => {
     board[y][x] = [-1, 0, 1]
       .map((dx) =>
@@ -89,9 +95,11 @@ const Home = () => {
   );
 
   const handleLeftClick = (x: number, y: number) => {
-    console.log(x, y);
-    setBomb(x, y);
-    checkAround(x, y);
+    if (!isEnd) {
+      console.log(x, y);
+      setBomb(x, y);
+      checkAround(x, y);
+    }
   };
 
   return (
